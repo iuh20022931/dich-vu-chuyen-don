@@ -5,8 +5,11 @@
   const currentPath = window.location.pathname.toLowerCase();
   const inPublicDir = currentPath.includes("/public/");
   const currentPage = currentPath.split("/").pop() || "index.html";
-  // Luôn sử dụng đường dẫn tuyệt đối để load header/footer, tránh sai lệch
-  const includesBase = "/includes/";
+  // Xác định đường dẫn gốc của dự án một cách linh hoạt.
+  // Nếu trang hiện tại nằm trong /public/, đường dẫn gốc sẽ là '../'.
+  // Nếu không, nó đang ở thư mục gốc của dự án, đường dẫn là './'.
+  const rootPath = inPublicDir ? "../" : "./";
+  const includesBase = `${rootPath}includes/`;
   const servicePageKeyByFile = {
     "chuyen-nha.html": "moving-house",
     "chuyen-kho-bai.html": "moving-warehouse",
@@ -49,26 +52,27 @@
       "chuyen-kho-bai.html",
       "chuyen-van-phong.html",
     ].includes(currentPage);
-    const pricingLink = hasPricingSection ? "#bao-gia" : "/index.html#services";
+    const pricingLink = hasPricingSection ? "#bao-gia" : `${rootPath}index.html#services`;
 
     // Xác định tiền tố đường dẫn tương đối để trỏ đến các dịch vụ khác (nằm ngoài project này)
+    // LƯU Ý: Logic này có thể không chính xác nếu cấu trúc thư mục thay đổi.
     const externalServicePrefix = inPublicDir ? '../../' : '../';
 
-    // Sử dụng đường dẫn tuyệt đối gốc để đảm bảo tính nhất quán trên toàn trang.
-    // Map này giờ sẽ giống nhau dù trang đang ở vị trí nào.
+    // Sử dụng rootPath để tạo các đường dẫn chính xác, bất kể dự án được đặt ở đâu.
     return {
-      brand: "/",
-      home: "/#hero",
-      about: "/#hero", // Giả sử 'about' trỏ về mục hero ở trang chủ
-      services: "/index.html#services",
+      brand: `${rootPath}index.html`,
+      home: `${rootPath}index.html#hero`,
+      about: `${rootPath}index.html#hero`, // Giả sử 'about' trỏ về mục hero ở trang chủ
+      services: `${rootPath}index.html#services`,
       pricing: pricingLink,
-      contact: "/index.html#contact",
-      booking: "/index.html#contact",
-      policy: "/public/policy.html", // Dựa theo README, policy.html nằm trong /public
-      "moving-house": "/public/chuyen-nha.html",
-      "moving-warehouse": "/public/chuyen-kho-bai.html",
-      "moving-office": "/public/chuyen-van-phong.html",
-      "news": "/public/tin-tuc.html",
+      contact: `${rootPath}index.html#contact`,
+      booking: `${rootPath}index.html#contact`,
+      policy: `${rootPath}public/policy.html`,
+      "moving-house": `${rootPath}public/chuyen-nha.html`,
+      "moving-warehouse": `${rootPath}public/chuyen-kho-bai.html`,
+      "moving-office": `${rootPath}public/chuyen-van-phong.html`,
+      "news": `${rootPath}public/tin-tuc.html`,
+      "brandLogo": `${rootPath}public/assets/images/favicon.png`,
 
       // Các link đến dịch vụ khác trong footer
       "svc-giao-hang-nhanh": `${externalServicePrefix}giao-hang-nhanh/`,
@@ -89,7 +93,11 @@
     root.querySelectorAll("[data-layout-link]").forEach((element) => {
       const key = element.getAttribute("data-layout-link");
       if (key && linkMap[key]) {
-        element.setAttribute("href", linkMap[key]);
+        if (element.tagName.toLowerCase() === "img") {
+          element.setAttribute("src", linkMap[key]);
+        } else {
+          element.setAttribute("href", linkMap[key]);
+        }
       }
     });
 
