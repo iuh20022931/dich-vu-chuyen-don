@@ -2,10 +2,8 @@
   if (window.__fastGoMainBootstrapLoaded) return;
   window.__fastGoMainBootstrapLoaded = true;
 
-  const inPublicDir = window.location.pathname
-    .toLowerCase()
-    .includes("/public/");
-  const scriptBase = inPublicDir ? "assets/js/" : "public/assets/js/";
+  // Luôn sử dụng đường dẫn tuyệt đối gốc để tải các module
+  const scriptBase = "/public/assets/js/";
   const modulePaths = [
     "main-core.js",
     "shared-modals.js",

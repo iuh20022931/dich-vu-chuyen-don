@@ -5,7 +5,8 @@
   const currentPath = window.location.pathname.toLowerCase();
   const inPublicDir = currentPath.includes("/public/");
   const currentPage = currentPath.split("/").pop() || "index.html";
-  const includesBase = inPublicDir ? "../includes/" : "includes/";
+  // Luôn sử dụng đường dẫn tuyệt đối để load header/footer, tránh sai lệch
+  const includesBase = "/includes/";
   const servicePageKeyByFile = {
     "chuyen-nha.html": "moving-house",
     "chuyen-kho-bai.html": "moving-warehouse",
@@ -13,10 +14,6 @@
     "tin-tuc.html": "news",
     "chi-tiet-tin-tuc.html": "news",
   };
-
-  function isServiceLandingPage(fileName) {
-    return Object.prototype.hasOwnProperty.call(servicePageKeyByFile, fileName);
-  }
 
   function loadPartial(url) {
     try {
@@ -45,42 +42,46 @@
   }
 
   function buildLinkMap() {
-    const pricingLink = isServiceLandingPage(currentPage)
-      ? "#bao-gia"
-      : inPublicDir
-        ? "../index.html#bao-gia"
-        : "#bao-gia";
+    // Chỉ các trang dịch vụ chi tiết mới có mục #bao-gia.
+    // Các trang khác sẽ link về mục dịch vụ ở trang chủ.
+    const hasPricingSection = [
+      "chuyen-nha.html",
+      "chuyen-kho-bai.html",
+      "chuyen-van-phong.html",
+    ].includes(currentPage);
+    const pricingLink = hasPricingSection ? "#bao-gia" : "/index.html#services";
 
-    if (inPublicDir) {
-      return {
-        brand: "../index.html",
-        home: "../index.html#hero",
-        about: "../index.html#hero",
-        services: "../index.html#services",
-        pricing: pricingLink,
-        contact: "../index.html#contact",
-        booking: "../index.html#contact",
-        policy: "../policy.html",
-        "moving-house": "chuyen-nha.html",
-        "moving-warehouse": "chuyen-kho-bai.html",
-        "moving-office": "chuyen-van-phong.html",
-        "news": "tin-tuc.html",
-      };
-    }
+    // Xác định tiền tố đường dẫn tương đối để trỏ đến các dịch vụ khác (nằm ngoài project này)
+    const externalServicePrefix = inPublicDir ? '../../' : '../';
 
+    // Sử dụng đường dẫn tuyệt đối gốc để đảm bảo tính nhất quán trên toàn trang.
+    // Map này giờ sẽ giống nhau dù trang đang ở vị trí nào.
     return {
-      brand: "index.html",
-      home: "#hero",
-      about: "#hero",
-      services: "#services",
+      brand: "/",
+      home: "/#hero",
+      about: "/#hero", // Giả sử 'about' trỏ về mục hero ở trang chủ
+      services: "/index.html#services",
       pricing: pricingLink,
-      contact: "#contact",
-      booking: "#contact",
-      policy: "policy.html",
-      "moving-house": "public/chuyen-nha.html",
-      "moving-warehouse": "public/chuyen-kho-bai.html",
-      "moving-office": "public/chuyen-van-phong.html",
-      "news": "public/tin-tuc.html",
+      contact: "/index.html#contact",
+      booking: "/index.html#contact",
+      policy: "/public/policy.html", // Dựa theo README, policy.html nằm trong /public
+      "moving-house": "/public/chuyen-nha.html",
+      "moving-warehouse": "/public/chuyen-kho-bai.html",
+      "moving-office": "/public/chuyen-van-phong.html",
+      "news": "/public/tin-tuc.html",
+
+      // Các link đến dịch vụ khác trong footer
+      "svc-giao-hang-nhanh": `${externalServicePrefix}giao-hang-nhanh/`,
+      "svc-dich-vu-chuyen-don": `${externalServicePrefix}dich-vu-chuyen-don/`,
+      "svc-lau-don-ve-sinh": `${externalServicePrefix}dich-vu-don-ve-sinh/demo/`,
+      "svc-cham-soc-me-be": `${externalServicePrefix}cham-soc-me-va-be/`,
+      "svc-cham-soc-vuon": `${externalServicePrefix}web-cham-soc-vuon-nha/`,
+      "svc-giat-ui": `${externalServicePrefix}giat-ui-nhanh/`,
+      "svc-tho-nha": `${externalServicePrefix}tho-nha/`,
+      "svc-cham-soc-nguoi-gia": `${externalServicePrefix}cham-soc-nguoi-gia/`,
+      "svc-cham-soc-nguoi-benh": `${externalServicePrefix}cham-soc-nguoi-benh/`,
+      "svc-thue-xe": `${externalServicePrefix}thue-xe/`,
+      "svc-sua-xe": `${externalServicePrefix}sua-xe-luu-dong/`,
     };
   }
 
