@@ -39,19 +39,19 @@
           (item) => `
         <article class="news-card">
           <div class="news-thumb">
-            <a href="/public/chi-tiet-tin-tuc.html?id=${item.id}">
+            <a href="chi-tiet-tin-tuc.html?id=${item.id}">
               <img src="${item.image}" alt="${item.title}" loading="lazy">
             </a>
           </div>
           <div class="news-content">
             <span class="news-date">📅 ${item.date} | ✍️ ${item.author}</span>
             <h3 class="news-title">
-              <a href="/public/chi-tiet-tin-tuc.html?id=${item.id}" style="color: inherit; text-decoration: none;">
+              <a href="chi-tiet-tin-tuc.html?id=${item.id}" style="color: inherit; text-decoration: none;">
                 ${item.title}
               </a>
             </h3>
             <p class="news-summary">${item.summary}</p>
-            <a href="/public/chi-tiet-tin-tuc.html?id=${item.id}" class="news-link">Xem chi tiết →</a>
+            <a href="chi-tiet-tin-tuc.html?id=${item.id}" class="news-link">Xem chi tiết →</a>
           </div>
         </article>
       `,
@@ -66,7 +66,7 @@
         container.innerHTML = `
           <div style="text-align: center; padding: 50px;">
             <h2>Không tìm thấy bài viết!</h2>
-            <a href="/public/tin-tuc.html" class="btn-primary" style="margin-top: 20px;">Quay lại trang tin tức</a>
+            <a href="tin-tuc.html" class="btn-primary" style="margin-top: 20px;">Quay lại trang tin tức</a>
           </div>`;
         return;
       }
@@ -93,7 +93,8 @@
       // Cập nhật Canonical URL
       const canonicalLink = document.querySelector('link[rel="canonical"]');
       if (canonicalLink) {
-        const absoluteUrl = new URL(`/public/chi-tiet-tin-tuc.html?id=${article.id}`, window.location.origin).href;
+        // Tạo URL tuyệt đối dựa trên vị trí trang hiện tại để đảm bảo tính di động
+        const absoluteUrl = new URL(`chi-tiet-tin-tuc.html?id=${article.id}`, window.location.href).href;
         canonicalLink.setAttribute("href", absoluteUrl);
       }
 
@@ -120,7 +121,7 @@
 
       const html = `
         <div class="article-header">
-          <a href="/public/tin-tuc.html" class="back-btn">← Quay lại danh sách</a>
+          <a href="tin-tuc.html" class="back-btn">← Quay lại danh sách</a>
           <h1 class="article-title">${article.title}</h1>
           <div class="article-meta">
             <span>Ngày đăng: ${article.date}</span> | 
